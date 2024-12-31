@@ -1,0 +1,71 @@
+services:
+  nginx-load-balancer: 
+    container_name: nginx-load-balancer
+    image: nginx:latest
+    ports:
+      - '80:80'
+    restart: always
+    networks:
+      - server-backend
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+
+  redis:
+    container_name: redis
+    image: redis:latest
+    restart: always
+    ports:
+      - 6379:6379
+    networks:
+      - server-backend
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  server-backend-1:
+    container_name: server-backend-1
+    image: mdmago/saga-pattern:latest
+    ports:
+      - 8080
+    restart: always
+    environment:
+      - SERVER=server-1
+      - REDIS_CONNECTION=redis:6379
+    networks:
+      - server-backend
+    depends_on: 
+      - redis
+    
+  server-backend-2:
+    container_name: server-backend-2
+    image: mdmago/saga-pattern:latest
+    ports:
+      - 8080
+    restart: always
+    environment:
+      - SERVER=server-2
+      - REDIS_CONNECTION=redis:6379
+    networks:
+      - server-backend
+    depends_on: 
+      - redis
+
+  server-backend-3:
+    container_name: server-backend-3
+    image: mdmago/saga-pattern:latest
+    ports:
+      - 8080
+    restart: always
+    environment:
+      - SERVER=server-3
+      - REDIS_CONNECTION=redis:6379
+    networks:
+      - server-backend
+    depends_on: 
+      - redis
+
+networks:
+  server-backend:
+    external: true

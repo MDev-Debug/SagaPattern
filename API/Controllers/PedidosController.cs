@@ -3,6 +3,7 @@ using Domain.Enum;
 using Domain.Interface;
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection.Metadata.Ecma335;
 
 namespace API.Controllers;
 
@@ -30,6 +31,13 @@ public class PedidosController : ControllerBase
 
         var id = await _pedidoRepository.AddAsync(pedido);
         return Ok(id);
+    }
+
+    [HttpGet]
+    public IActionResult Teste()
+    {
+        var env = Environment.GetEnvironmentVariable("SERVER");
+        return Ok(env);
     }
 
     [HttpPut("{id}/processar")]
