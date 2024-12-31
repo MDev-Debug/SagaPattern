@@ -3,8 +3,12 @@
 namespace Hubs;
 public class ChatHub : Hub
 {
-    public async Task SendMessage(string id, string message)
+    public override Task OnConnectedAsync()
     {
-        await Clients.Group(id).SendAsync("ReceiveMessage", message + $" {Environment.GetEnvironmentVariable("SERVER").ToString()}");
+        return Clients.All.SendAsync($" {Environment.GetEnvironmentVariable("SERVER").ToString()}");
+    }
+    public async Task SendMessage(string user, string message)
+    {
+        await Clients.All.SendAsync("ReceiveMessage", user, message + $" {Environment.GetEnvironmentVariable("SERVER").ToString()}");
     }
 }

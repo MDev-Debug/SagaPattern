@@ -30,6 +30,7 @@ builder.Services.AddSignalR(opt =>
     });
 
 var app = builder.Build();
+app.UseCors();
 app.UseSwagger();
 app.UseSwaggerUI();
 
@@ -41,10 +42,11 @@ app.Use(async (context, next) =>
     if (!string.IsNullOrEmpty(origin))
     {
         context.Response.Headers.Add("Access-Control-Allow-Origin", origin);
-        context.Response.Headers.Add("Vary", "Origin"); // Necessário para evitar problemas de cache
+        context.Response.Headers.Add("Vary", "Origin");
     }
     await next();
 });
+
 app.MapHub<ChatHub>("/chat");
 
 app.MapControllers();
