@@ -12,14 +12,13 @@ builder.Services.AddCors(options =>
         policy
             .AllowAnyHeader()
             .AllowAnyMethod()
-            .SetIsOriginAllowed(origin => true) // Permite qualquer origem
+            .SetIsOriginAllowed(origin => true) 
             .AllowCredentials();
     });
 });
 
 var env_redis = Environment.GetEnvironmentVariable("REDIS_CONNECTION") ?? "localhost:6379";
 
-// Configurar Redis como backplane para SignalR
 builder.Services.AddSignalR(opt =>
 {
     opt.EnableDetailedErrors = true;
@@ -30,7 +29,6 @@ builder.Services.AddSignalR(opt =>
     });
 
 var app = builder.Build();
-app.UseCors();
 app.UseSwagger();
 app.UseSwaggerUI();
 
@@ -46,7 +44,6 @@ app.Use(async (context, next) =>
     }
     await next();
 });
-
 app.MapHub<ChatHub>("/chat");
 
 app.MapControllers();
